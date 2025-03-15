@@ -47,7 +47,11 @@ namespace TodoAppBackend.Services
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null) return false;
 
-            _unitOfWork.Users.Delete(user);
+            var result = await _unitOfWork.Users.Delete(id); // ✅ result là bool
+            if (result)
+            {
+                Console.WriteLine("Xóa thành công!");
+            }
             await _unitOfWork.SaveAsync();
             return true;
         }
@@ -56,6 +60,7 @@ namespace TodoAppBackend.Services
         {
             return await _unitOfWork.Users.GetUserWithTodosAsync(userId);
         }
+
     }
 
 }

@@ -26,10 +26,10 @@ namespace TodoAppBackend.Data
 
             // 🟢 Thiết lập quan hệ cha - con của SubTask (ParentSubTaskId)
             modelBuilder.Entity<SubTask>()
-                .HasMany(s => s.ChildSubTasks)
-                .WithOne(s => s.ParentSubTask)
-                .HasForeignKey(s => s.ParentSubTaskId)
-                .OnDelete(DeleteBehavior.Cascade); // ✅ Khi xóa một SubTask, các SubTask con cũng bị xóa
+         .HasOne(s => s.ParentSubTask)
+         .WithMany(s => s.ChildSubTasks)
+         .HasForeignKey(s => s.ParentSubTaskId)
+         .OnDelete(DeleteBehavior.NoAction);
 
             // 🟢 Thiết lập quan hệ User - TodoItem (Bảng trung gian)
             modelBuilder.Entity<UserTodoItem>()
@@ -39,13 +39,13 @@ namespace TodoAppBackend.Data
                 .HasOne(ut => ut.User)
                 .WithMany(u => u.TodoItems)
                 .HasForeignKey(ut => ut.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserTodoItem>()
                 .HasOne(ut => ut.TodoItem)
                 .WithMany(t => t.AssignedUsers)
                 .HasForeignKey(ut => ut.TodoItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             // 🟢 Thiết lập quan hệ User - SubTask (Bảng trung gian)
             modelBuilder.Entity<UserSubTask>()
@@ -55,13 +55,13 @@ namespace TodoAppBackend.Data
                 .HasOne(us => us.User)
                 .WithMany(u => u.SubTasks)
                 .HasForeignKey(us => us.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserSubTask>()
                 .HasOne(us => us.SubTask)
                 .WithMany(st => st.AssignedUsers)
                 .HasForeignKey(us => us.SubTaskId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

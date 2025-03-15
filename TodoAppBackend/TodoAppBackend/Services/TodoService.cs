@@ -48,7 +48,11 @@ namespace TodoAppBackend.Services
             var todo = await _unitOfWork.Todos.GetByIdAsync(id);
             if (todo == null) return false;
 
-            _unitOfWork.Todos.Delete(todo);
+            var result = await _unitOfWork.Todos.Delete(id);
+            if (result)
+            {
+                Console.WriteLine("Xóa thành công!");
+            }
             await _unitOfWork.SaveAsync();
             return true;
         }

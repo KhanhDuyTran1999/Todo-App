@@ -32,5 +32,26 @@ namespace TodoAppBackend.Repositories
         public void Update(User entity) => _context.Users.Update(entity);
 
         public void Delete(User entity) => _context.Users.Remove(entity);
+
+        public async Task<bool> CanDeleteAsync(int userId)
+        {
+            return !await _context.UserTodoItems.AnyAsync(uti => uti.UserId == userId) &&
+                   !await _context.UserSubTasks.AnyAsync(ust => ust.UserId == userId);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            if (!await CanDeleteAsync(id))
+            {
+                throw new InvalidOperationException("Không thể xóa User vì User này đang có Task hoặc SubTask.");
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) throw new KeyNotFoundException($"User với ID {id} không tồn tại.");
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

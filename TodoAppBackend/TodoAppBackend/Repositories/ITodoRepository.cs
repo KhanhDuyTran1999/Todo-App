@@ -10,7 +10,8 @@ namespace TodoAppBackend.Repositories
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);
         void Update(T entity);
-        void Delete(T entity);
+        Task<bool> Delete(int id);
+        Task<bool> CanDeleteAsync(int id);
     }
     public interface ITodoRepository : IRepository<TodoItem>
     {

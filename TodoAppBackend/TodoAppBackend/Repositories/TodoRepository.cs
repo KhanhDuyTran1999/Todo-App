@@ -32,6 +32,24 @@ namespace TodoAppBackend.Repositories
 
         public void Update(TodoItem entity) => _context.TodoItems.Update(entity);
 
-        public void Delete(TodoItem entity) => _context.TodoItems.Remove(entity);
+        public async Task<bool> CanDeleteAsync(int taskId)
+        {
+            return !await _context.SubTasks.AnyAsync(st => st.TodoItemId == taskId);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            if (!await CanDeleteAsync(id))
+            {
+                throw new InvalidOperationException("Không thể xóa Task vì có SubTask liên quan.");
+            }
+
+            var task = await _context.TodoItems.FindAsync(id);
+            if (task == null) throw new KeyNotFoundException($"Task với ID {id} không tồn tại.");
+
+            _context.TodoItems.Remove(task);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

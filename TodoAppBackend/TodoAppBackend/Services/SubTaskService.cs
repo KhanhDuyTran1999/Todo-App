@@ -47,8 +47,11 @@ namespace TodoAppBackend.Services
         {
             var subTask = await _unitOfWork.SubTasks.GetByIdAsync(id);
             if (subTask == null) return false;
-
-            _unitOfWork.SubTasks.Delete(subTask);
+            var result = await _unitOfWork.SubTasks.Delete(id); // ✅ result là bool
+            if (result)
+            {
+                Console.WriteLine("Xóa thành công!");
+            }
             await _unitOfWork.SaveAsync();
             return true;
         }
